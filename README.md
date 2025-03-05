@@ -32,9 +32,9 @@ authenticator.use(
       clientId: CLIENT_ID,
       clientSecret: CLIENT_SECRET,
       redirectURI: "https://example.app/auth/callback",
+      scopes: ["openid", "email", "profile"],
 
       cookie: "oauth2", // Optional, can also be an object with more options
-      scopes: ["openid", "email", "profile"], // optional, fully typed
     },
     async ({ tokens, request }) => {
       // here you can use the params above to get the user and return it
