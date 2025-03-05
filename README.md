@@ -34,7 +34,7 @@ authenticator.use(
       redirectURI: "https://example.app/auth/callback",
       scopes: ["openid", "email", "profile"],
 
-      cookie: "oauth2", // Optional, can also be an object with more options
+      cookie: "polar", // Optional, can also be an object with more options
     },
     async ({ tokens, request }) => {
       // here you can use the params above to get the user and return it
