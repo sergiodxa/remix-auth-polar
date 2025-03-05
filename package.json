@@ -1,7 +1,7 @@
 {
-	"name": "remix-auth-strategy-template",
+	"name": "remix-auth-polar",
 	"version": "0.0.0",
-	"description": "A description of the strategy",
+	"description": "A Remix Auth strategy for Polar.sh",
 	"license": "MIT",
 	"funding": ["https://github.com/sponsors/sergiodxa"],
 	"author": {
@@ -11,13 +11,13 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/sergiodxa/remix-auth-strategy-template"
+		"url": "https://github.com/sergiodxa/remix-auth-polar"
 	},
-	"homepage": "https://sergiodxa.github.io/remix-auth-strategy-template",
+	"homepage": "https://sergiodxa.github.io/remix-auth-polar",
 	"bugs": {
-		"url": "https://github.com/sergiodxa/remix-auth-strategy-template/issues"
+		"url": "https://github.com/sergiodxa/remix-auth-polar/issues"
 	},
-	"keywords": ["remix", "remix-auth", "auth", "authentication", "strategy"],
+	"keywords": ["remix", "remix-auth", "auth", "authentication", "strategy", "polar.sh", "polar"],
 	"scripts": {
 		"build": "tsc",
 		"typecheck": "tsc --noEmit",
@@ -36,8 +36,8 @@
 		"./package.json": "./package.json"
 	},
 	"dependencies": {
-		"react-router": "^7.0.2",
-		"remix-auth": "^4.0.0"
+		"remix-auth": "^4.0.0",
+		"remix-auth-oauth2": "^3.3.0"
 	},
 	"peerDependencies": {},
 	"devDependencies": {
@@ -46,6 +46,7 @@
 		"@total-typescript/tsconfig": "^1.0.4",
 		"@types/bun": "^1.1.6",
 		"consola": "^3.2.3",
+		"msw": "^2.7.3",
 		"typedoc": "^0.27.9",
 		"typedoc-plugin-mdn-links": "^5.0.1",
 		"typescript": "^5.5.4"
