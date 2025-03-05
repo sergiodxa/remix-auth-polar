@@ -163,3 +163,41 @@ const scopes: Array<PolarStrategy.Scope> = [
   // ...more scopes
 ];
 ```
+
+### Usage with Polar SDK
+
+If you are using the Polar SDK in your application, you can use the `PolarStrategy` to get the user's access token and authenticate the SDK.
+
+First return the access token from the strategy.
+
+```ts
+import { PolarStrategy } from "remix-auth-polar";
+
+authenticator.use(
+  new PolarStrategy<User>(
+    {
+      clientId: CLIENT_ID,
+      clientSecret: CLIENT_SECRET,
+      redirectURI: "https://example.app/auth/callback",
+      scopes: ["openid", "email", "profile"],
+    },
+    async ({ tokens }) => tokens.accessToken()
+  )
+);
+```
+
+> [!TIP]
+> Return the refresh token and keep that in your session, then use it to get a new access token when needed.
+
+Then you can use the access token to authenticate the SDK.
+
+```ts
+// routes/auth.callback.ts
+import { Polar } from "@polar-sh/sdk";
+
+export async function loader({ request }: Route.ActionArgs) {
+  let accessToken = await authenticator.authenticate("polar", request);
+  let polar = new Polar({ accessToken });
+  return data({ user: await polar.oauth2.userinfo() });
+}
+```
