@@ -17,7 +17,15 @@
 	"bugs": {
 		"url": "https://github.com/sergiodxa/remix-auth-polar/issues"
 	},
-	"keywords": ["remix", "remix-auth", "auth", "authentication", "strategy", "polar.sh", "polar"],
+	"keywords": [
+		"remix",
+		"remix-auth",
+		"auth",
+		"authentication",
+		"strategy",
+		"polar.sh",
+		"polar"
+	],
 	"scripts": {
 		"build": "tsc",
 		"typecheck": "tsc --noEmit",
