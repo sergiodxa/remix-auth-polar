@@ -8,7 +8,6 @@ import {
 	generateCodeVerifier,
 	generateState,
 } from "arctic";
-import { createOAuth2Request, sendTokenRequest } from "arctic/dist/request.js";
 import createDebug from "debug";
 import { Strategy } from "remix-auth/strategy";
 import { redirect } from "./lib/redirect.js";
@@ -142,24 +141,8 @@ export class PolarStrategy<User> extends Strategy<
 		return { state, codeVerifier, url };
 	}
 
-	protected async validateAuthorizationCode(
-		code: string,
-		codeVerifier: string,
-	) {
-		let body = new URLSearchParams();
-		body.set("grant_type", "authorization_code");
-		body.set("code", code);
-		body.set("redirect_uri", this.options.redirectURI.toString());
-		body.set("code_verifier", codeVerifier);
-		body.set("client_id", this.options.clientId);
-		body.set("client_secret", this.options.clientSecret);
-
-		let request = createOAuth2Request(
-			"https://api.polar.sh/v1/oauth2/token",
-			body,
-		);
-
-		return await sendTokenRequest(request);
+	protected validateAuthorizationCode(code: string, codeVerifier: string) {
+		return this.client.validateAuthorizationCode(code, codeVerifier);
 	}
 
 	/**
