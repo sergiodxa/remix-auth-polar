@@ -11,6 +11,7 @@ import { Cookie, SetCookie } from "@mjackson/headers";
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/native";
 import { PolarStrategy } from ".";
+import { StateStore } from "./lib/store";
 
 const server = setupServer(
 	http.post("https://api.polar.sh/v1/oauth2/token", async () => {
@@ -18,7 +19,7 @@ const server = setupServer(
 			access_token: "mocked",
 			expires_in: 3600,
 			refresh_token: "mocked",
-			scope: ["user:read", "benefits:read"].join(" "),
+			scope: ["user:email", "user:profile"].join(" "),
 			token_type: "Bearer",
 		});
 	}),
@@ -31,7 +32,7 @@ describe(PolarStrategy.name, () => {
 		clientId: "MY_CLIENT_ID",
 		clientSecret: "MY_CLIENT_SECRET",
 		redirectURI: "https://example.com/callback",
-		scopes: ["user:read", "benefits:read"],
+		scopes: ["openid", "email", "profile"],
 	} satisfies PolarStrategy.ConstructorOptions);
 
 	interface User {
@@ -88,6 +89,64 @@ describe(PolarStrategy.name, () => {
 		expect(strategy.authenticate(request)).rejects.toThrowError(
 			new ReferenceError("Missing state on cookie."),
 		);
+	});
+
+	test("throws if the state in the url doesn't match the state in the session", async () => {
+		let strategy = new PolarStrategy<User>(options, verify);
+
+		let store = new StateStore();
+		store.set("random-state", "random-code-verifier");
+
+		let cookie = new Cookie();
+		cookie.set("polar", store.toString());
+
+		let request = new Request(
+			"https://example.com/callback?state=another-state&code=random-code",
+			{ headers: { Cookie: cookie.toString() } },
+		);
+
+		expect(strategy.authenticate(request)).rejects.toThrowError(
+			new ReferenceError("State in URL doesn't match state in cookie."),
+		);
+	});
+
+	test("calls verify with the tokens and request", async () => {
+		let strategy = new PolarStrategy<User>(options, verify);
+
+		let store = new StateStore();
+		store.set("random-state", "random-code-verifier");
+
+		let cookie = new Cookie();
+		cookie.set(store.toSetCookie()?.name as string, store.toString());
+
+		let request = new Request(
+			"https://example.com/callback?state=random-state&code=random-code",
+			{ headers: { cookie: cookie.toString() } },
+		);
+
+		await strategy.authenticate(request);
+
+		expect(verify).toHaveBeenCalled();
+	});
+
+	test("returns the result of verify", () => {
+		let user = { id: "123" };
+		verify.mockResolvedValueOnce(user);
+
+		let strategy = new PolarStrategy<User>(options, verify);
+
+		let store = new StateStore();
+		store.set("random-state", "random-code-verifier");
+
+		let cookie = new Cookie();
+		cookie.set(store.toSetCookie()?.name as string, store.toString());
+
+		let request = new Request(
+			"https://example.com/callback?state=random-state&code=random-code",
+			{ headers: { cookie: cookie.toString() } },
+		);
+
+		expect(strategy.authenticate(request)).resolves.toEqual(user);
 	});
 
 	test("handles race condition of state and code verifier", async () => {

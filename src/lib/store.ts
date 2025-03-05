@@ -78,7 +78,7 @@ export class StateStore {
 	}
 
 	toSetCookie(
-		cookieName = "oauth2",
+		cookieName = "polar",
 		options: Omit<SetCookieInit, "value"> = {},
 	) {
 		let id = crypto.randomUUID();
@@ -97,7 +97,7 @@ export class StateStore {
 	 * Create a new instance from a Request object by getting the store from a
 	 * cookie with the given name.
 	 */
-	static fromRequest(request: Request, cookieName = "oauth2") {
+	static fromRequest(request: Request, cookieName = "polar") {
 		let cookie = new Cookie(request.headers.get("cookie") ?? "");
 
 		let params = new URLSearchParams();
