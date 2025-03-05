@@ -11,6 +11,9 @@ A strategy for [Polar.sh](https://polar.sh) that allows you to authorize Polar c
 
 ## How to use
 
+> [!TIP]
+> You can find an example React Router application using this strategy on https://github.com/sergiodxa/remix-auth-polar-example.
+
 ### Installation
 
 ```bash
