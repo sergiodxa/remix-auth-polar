@@ -76,3 +76,90 @@ export async function loader({ request }: Route.LoaderArgs) {
 > This route must be a `loader` as the redirect will trigger a `GET` request.
 
 Once you have the `user` object returned by your strategy verify function, you can do whatever you want with that information. This can be storing the user in a session, creating a new user in your database, link the account to an existing user in your database, etc.
+
+### Using the Refresh Token
+
+The strategy exposes a public `refreshToken` method that you can use to refresh the access token.
+
+```ts
+let strategy = new PolarStrategy<User>(options, verify);
+let tokens = await strategy.refreshToken(refreshToken);
+```
+
+The refresh token is part of the `tokens` object the verify function receives. How you store it to call `strategy.refreshToken` and what you do with the `tokens` object after it is up to you.
+
+The most common approach would be to store the refresh token in the user data and then update the session after refreshing the token.
+
+```ts
+authenticator.use(
+  new PolarStrategy<User>(
+    options,
+    async ({ tokens, request }) => {
+      let user = await getUser(tokens, request);
+      return {
+        ...user,
+        accessToken: tokens.accessToken()
+        refreshToken: tokens.hasRefreshToken() ? tokens.refreshToken() : null,
+      }
+    }
+  )
+);
+
+// later in your code you can use it to get new tokens object
+let tokens = await strategy.refreshToken(user.refreshToken);
+```
+
+### Revoking Tokens
+
+You can revoke the access token the user has with the provider.
+
+```ts
+await strategy.revokeToken(user.accessToken);
+```
+
+### Customizing the Cookie
+
+You can customize the cookie options by passing an object to the `cookie` option.
+
+```ts
+authenticator.use(
+  new PolarStrategy<User>(
+    {
+      cookie: {
+        name: "polar",
+        maxAge: 60 * 60 * 24 * 7, // 1 week
+        path: "/auth",
+        httpOnly: true,
+        sameSite: "lax",
+        secure: process.env.NODE_ENV === "production",
+      },
+      ...otherOptions,
+    },
+    async ({ tokens, request }) => {
+      return await getUser(tokens, request);
+    }
+  )
+);
+```
+
+This will set the cookie with the name `polar`, with a max age of 1 week, only accessible on the `/auth` path, http only, same site lax and secure if the application is running in production.
+
+### Scopes
+
+The `PolarStrategy` constructor accepts a `scopes` option that is an array of strings with the scopes you want to request from Polar.
+
+The scopes are the permissions you are requesting from the user. The strategy providers a type with all the supported scopes by Polar to the date of the package release.
+
+```ts
+import { PolarStrategy } from "remix-auth-polar";
+
+const scopes: Array<PolarStrategy.Scope> = [
+  "openid",
+  "email",
+  "profile",
+  "user:read",
+  "benefits:read",
+  "benefits:write",
+  // ...more scopes
+];
+```
