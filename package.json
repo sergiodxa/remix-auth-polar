@@ -44,6 +44,7 @@
 		"./package.json": "./package.json"
 	},
 	"dependencies": {
+		"@mjackson/headers": "^0.10.0",
 		"arctic": "^3.4.0",
 		"debug": "^4.4.0",
 		"remix-auth": "^4.0.0"
