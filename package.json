@@ -50,7 +50,7 @@
 		"./package.json": "./package.json"
 	},
 	"dependencies": {
-		"@mjackson/headers": "^0.10.0",
+		"@mjackson/headers": "^0.11.1",
 		"arctic": "^3.5.0",
 		"debug": "^4.4.0",
 		"remix-auth": "^4.0.0"
