@@ -53,7 +53,7 @@
 		"@mjackson/headers": "^0.11.1",
 		"arctic": "^3.5.0",
 		"debug": "^4.4.0",
-		"remix-auth": "^4.0.0"
+		"remix-auth": "^5.0.0"
 	},
 	"peerDependencies": {},
 	"devDependencies": {
